@@ -5,7 +5,7 @@ edition = "2021"
 authors = ["Emma Britton <emmabritton@pm.me>"]
 description = "Assembler for EmmaChip8"
 publish = false
-license-file = "LICENSE"
+license-file = "../LICENSE"
 readme = "README.md"
 keywords = ["chip8","emu"]
 
