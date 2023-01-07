@@ -1,0 +1,32 @@
+- test1.c8
+  	- Description: Test various Chip-8 functions
+  	- Author: Skosulor
+  	- URL: https://github.com/Skosulor/c8int/tree/master/test
+- test2.c8
+	- Description: Test various Chip-8 functions
+    - Author: corax89
+    - URL: https://github.com/corax89/chip8-test-rom 
+- maze.c8
+	- Description: Draw maze
+	- Author: David Winter
+	- URL: https://github.com/novoselov-ab/chip8-rust/tree/master/roms/demos
+- particles.c8
+	- Description: Particle demo
+	- Author: zeroZShadow
+	- URL: https://github.com/novoselov-ab/chip8-rust/tree/master/roms/demos
+- sierpinski.c8
+	- Description: Draws sierpinski triangle
+	- Author: Sergey Naydenov
+	- URL: https://github.com/novoselov-ab/chip8-rust/tree/master/roms/demos
+- key_test.c8
+	- Description: Check keys works
+	- Author: HAP
+	- URL: https://github.com/novoselov-ab/chip8-rust/tree/master/roms/programs
+- rand_test.c8
+	- Description: Check random works
+	- Author: Matthew Mikolay
+	- URL: https://github.com/novoselov-ab/chip8-rust/tree/master/roms/programs
+- logo.c8
+	- Description: Chip-8 Logo
+	- Author: Garstyciuks
+	- URL: https://github.com/novoselov-ab/chip8-rust/tree/master/roms/programs

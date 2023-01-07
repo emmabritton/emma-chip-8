@@ -1,0 +1,17 @@
+[package]
+name = "ec8-assembler"
+version = "0.1.0"
+edition = "2021"
+authors = ["Emma Britton <emmabritton@pm.me>"]
+description = "Assembler for EmmaChip8"
+publish = false
+license-file = "LICENSE"
+readme = "README.md"
+keywords = ["chip8","emu"]
+
+[dependencies]
+clap = { version = "4.0.32",features=["cargo"] }
+ec8-common = {path="../ec8-common"}
+color-eyre = "0.6.2"
+log = "0.4.17"
+env_logger = "0.10.0"

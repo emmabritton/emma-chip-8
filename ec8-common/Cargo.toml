@@ -1,0 +1,12 @@
+[package]
+name = "ec8-common"
+version = "0.1.0"
+edition = "2021"
+authors = ["Emma Britton <emmabritton@pm.me>"]
+description = "Common methods and values for EmmaChip8"
+publish = false
+license-file = "LICENSE"
+readme = "README.md"
+keywords = ["chip8","emu"]
+
+[dependencies]

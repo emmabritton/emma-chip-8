@@ -1,0 +1,19 @@
+[package]
+name = "ec8-core"
+version = "0.1.0"
+edition = "2021"
+authors = ["Emma Britton <emmabritton@pm.me>"]
+description = "Emulation core for EmmaChip8"
+publish = false
+license-file = "LICENSE"
+readme = "README.md"
+keywords = ["chip8","emu"]
+
+[features]
+default = []
+logging = ["log"]
+
+[dependencies]
+ec8-common = { path = "../ec8-common" }
+fastrand = "1.8.0"
+log = { version = "0.4.17", optional = true }
