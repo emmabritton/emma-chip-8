@@ -25,4 +25,6 @@ The following structure will be made
 
 The `run.sh` script also tells the assembler to create a description file (also in `output`) that describes what each line does.
 
-If you have a binary file (often `.c8` or `.ch8`) you can use `exe.sh <file>`
+If you have a binary file (often `.c8` or `.ch8`) you can use `exe.sh <file>`.
+
+For `run.sh` and `exe.sh`, you can pass `log` as the first param and the file in the second, e.g. `exe.sh log test.c8`
