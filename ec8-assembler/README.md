@@ -4,9 +4,29 @@ Assembler for EmmaChip8
 
 ## Usage
 
-`ec8-assembler <file>`
+```
+ec8-assembler [OPTIONS] <INPUT_FILE>
+
+Arguments:
+  <INPUT_FILE>  EC8 ASM file (*.eca)
+
+Options:
+  -o, --output [<FILE>]        Output file (defaults to input dir)
+  -d, --desc [<FILE>]          Generate describe file
+  -l, --level [<LevelFilter>]  Logging level [default: warn] [possible values: off, error, warn, info, debug, trace]
+  -h, --help                   Print help information
+  -V, --version                Print version information
+
+```
+
+For example
+`./ec8-assembler prog.eca`
 
 ## Language
+
+Anything after semicolons is ignored, i.e. `ADD V0, V1 ;this is a comment`
+
+To add data use `DAT [<hex bytes>]`, i.e. `DAT [3AFF0001]`
 
 | Name                                | Mnemonic | Params        | Example         | Code   | Notes                                           |
 |-------------------------------------|----------|---------------|-----------------|--------|-------------------------------------------------|
@@ -44,3 +64,13 @@ Assembler for EmmaChip8
 | Write BCD to memory                 | `BCD`    | Reg           | `BCD V5`        | `Fx33` | Hundreds at I, tens at I+1, ones at I+2         |
 | Store registers                     | `STR`    | Reg           | `STR VE`        | `Fx55` | Stores registers 0 - x in memory starting at I  |
 | Load registers                      | `LDR`    | Reg           | `LDR VE`        | `Fx65` | Loads registers 0 - x from memory starting at I |
+
+Example Program
+```
+STI 0        ;Set I to 0
+DRW V0,V1, 5 ;Draw 0 to 0,0
+SET V3, F    ;Set V3 to F
+CHR V3       ;Set I to graphic for F
+SET V0, 5    ;Set V0 to 5
+DRW V0,V1, 5 ;Draw F to 0,5
+```

@@ -45,6 +45,7 @@ fn parse_line(i: usize, line: &str) -> Result<Line, String> {
     }
     let (op, params) = line.split_at(3);
     match op.to_lowercase().trim() {
+        "dat" => Line::data(i, params),
         "clr" => Ok(Line::no_params(i, ClearDisplay, [0x00, 0xE0])),
         "ret" => Ok(Line::no_params(i, Return, [0x00, 0xEE])),
         "jmp" => Line::nnn(i, Jump, 0x10, params),
@@ -87,6 +88,34 @@ fn parse_line(i: usize, line: &str) -> Result<Line, String> {
 impl Line {
     pub fn no_params(i: usize, opcode: OpCodes, bytes: [u8; 2]) -> Self {
         Line::new_code(i, opcode, bytes)
+    }
+
+    pub fn data(i: usize, params: &str) -> std::result::Result<Line, String> {
+        let start = params.find('[');
+        let end = params.find(']');
+        if start.is_none() || end.is_none() {
+            return Err(format!("Line {i}) Data format is invalid (markers)"));
+        }
+        let byte_str: Vec<char> = params
+            .chars()
+            .skip(start.unwrap() + 1)
+            .take(end.unwrap() - start.unwrap() - 1)
+            .collect();
+        if byte_str.len() % 2 != 0 {
+            return Err(format!("Line {i}) Data format is invalid (length)"));
+        }
+        let mut bytes = vec![];
+        for chrs in byte_str.chunks_exact(2) {
+            let left = u8::from_str_radix(chrs[0].to_string().as_str(), 16).map_err(|err| {
+                format!("Line {i}) Unable to parse data char '{}': {err}", chrs[0])
+            })?;
+            let right = u8::from_str_radix(chrs[1].to_string().as_str(), 16).map_err(|err| {
+                format!("Line {i}) Unable to parse data char '{}': {err}", chrs[1])
+            })?;
+            bytes.push((left << 4) | right);
+        }
+
+        Ok(Line::new_data(i, bytes))
     }
 
     pub fn x(i: usize, opcode: OpCodes, first: u8, last: u8, params: &str) -> Result<Self, String> {
@@ -244,6 +273,14 @@ mod test {
             program.into_bytes(),
             vec![0x00, 0xE0, 0x00, 0xEE, 0x11, 0x23, 0x80, 0xE4]
         );
+
+        let source = vec!["DAT [3411FAFA]", "CLR"];
+        let program = parse(source).unwrap();
+        assert_eq!(program.describe(), "DATA 3411FAFA\n00E0 Clear the display \n".to_string());
+        assert_eq!(
+            program.into_bytes(),
+            vec![0x34, 0x11, 0xFA, 0xFA, 0x00, 0xE0]
+        );
     }
 
     #[test]
@@ -266,7 +303,7 @@ mod test {
             cleaned,
             vec![
                 (0, "ASM 1".to_string(), "".to_string()),
-                (1, "ASM 2".to_string(), "".to_string())
+                (1, "ASM 2".to_string(), "".to_string()),
             ]
         );
 
@@ -277,9 +314,17 @@ mod test {
             vec![
                 (1, "ASM 1".to_string(), "".to_string()),
                 (2, "".to_string(), "whole line".to_string()),
-                (3, "ASM 2".to_string(), "note".to_string())
+                (3, "ASM 2".to_string(), "note".to_string()),
             ]
         );
+    }
+
+    #[test]
+    fn check_data() {
+        assert_eq!(
+            Line::data(4, "[AA001D]"),
+            Ok(Line::new_data(4, vec![0xAA, 0x00, 0x1D]))
+        )
     }
 
     #[test]

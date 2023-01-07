@@ -20,8 +20,16 @@ fn main() -> Result<()> {
                 .value_hint(FilePath)
                 .value_parser(value_parser!(PathBuf)),
         )
-        .arg(arg!(-o --output [FILE] "Output file (defaults to input dir)").value_parser(value_parser!(PathBuf)).value_hint(FilePath))
-        .arg(arg!(-d --desc [FILE] "Generate describe file").value_parser(value_parser!(PathBuf)).value_hint(FilePath))
+        .arg(
+            arg!(-o --output [FILE] "Output file (defaults to input dir)")
+                .value_parser(value_parser!(PathBuf))
+                .value_hint(FilePath),
+        )
+        .arg(
+            arg!(-d --desc [FILE] "Generate describe file")
+                .value_parser(value_parser!(PathBuf))
+                .value_hint(FilePath),
+        )
         .arg(
             arg!(-l --level [LevelFilter] "Logging level")
                 .value_parser(LevelFilterParser {})
