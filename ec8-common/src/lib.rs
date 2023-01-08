@@ -40,6 +40,8 @@ pub const REG_FLAG: usize = 15;
 /// x or y = Register number 0-F
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
 pub enum OpCodes {
+    /// 0nnn
+    SysCall,
     /// 00E0
     ///
     /// Clears the display

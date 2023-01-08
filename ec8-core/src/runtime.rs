@@ -47,6 +47,7 @@ impl EmmaChip8 {
         let x = bytes[0].second_nibble();
         let y = bytes[1].first_nibble_shifted();
         match opcode {
+            OpCodes::SysCall => {/*do nothing, not supported*/},
             OpCodes::ClearDisplay => self.output.fill(false),
             OpCodes::Return => match self.stack.pop_back() {
                 None => self.state = State::StackEmpty,

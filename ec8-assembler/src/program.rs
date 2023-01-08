@@ -1,9 +1,28 @@
 use crate::program::Line::*;
 use ec8_common::OpCodes;
 use std::fmt::{Display, Formatter};
+use ec8_common::OpCodes::SysCall;
 
 pub struct Program {
     pub lines: Vec<Line>,
+}
+
+impl Program {
+    pub fn warnings(&self) -> Option<String> {
+        let mut sys_calls = vec![];
+        for line in &self.lines {
+            if let Code { idx, opcode, bytes:_, comment:_ } = line {
+                if opcode == &SysCall {
+                    sys_calls.push(idx);
+                }
+            }
+        }
+        if !sys_calls.is_empty() {
+            Some(format!("Contains system calls (0x0nnn) on lines {}", sys_calls.iter().map(|num| num.to_string()).collect::<Vec<String>>().join(", ")))
+        } else {
+            None
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

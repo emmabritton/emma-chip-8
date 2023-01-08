@@ -10,6 +10,7 @@ impl OpCodes {
         let nn = format!("{:02X}", bytes[1]);
         let nnn = format!("{:03X}", u16::from_be_bytes(bytes) & 0xFFF);
         match self {
+            OpCodes::SysCall => format!("SysCall to {nnn} (Unsupported)"),
             OpCodes::ClearDisplay => "Clear the display".to_string(),
             OpCodes::Return => "Return from subroutine".to_string(),
             OpCodes::Jump => format!("Jump to {nnn}"),
@@ -113,6 +114,7 @@ impl OpCodes {
         };
         let next_instr = format!("\n  {next_instr}");
         let text = match self {
+            OpCodes::SysCall => format!("SysCall to {addr} (Unsupported)"),
             OpCodes::ClearDisplay => "Clear the display".to_string(),
             OpCodes::Return => format!("Return from {data_addr}"),
             OpCodes::Jump => format!("Jump to {addr}"),

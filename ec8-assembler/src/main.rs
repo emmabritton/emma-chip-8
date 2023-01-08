@@ -45,6 +45,10 @@ fn main() -> Result<()> {
 
     let program = parse(source)?;
 
+    if let Some(text) = program.warnings() {
+        eprintln!("Warning:\n{text}");
+    }
+
     if let Some(desc_file) = options.desc_file {
         let result = fs::write(desc_file, program.describe());
         if let Err(err) = result {

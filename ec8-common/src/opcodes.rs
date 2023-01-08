@@ -11,7 +11,7 @@ pub fn from_bytes(bytes: [u8; 2]) -> Option<OpCodes> {
         0x00 => match bytes[1] {
             0xE0 => Some(ClearDisplay),
             0xEE => Some(Return),
-            _ => None,
+            _ => Some(SysCall),
         },
         0x10 => Some(Jump),
         0x20 => Some(Call),
@@ -141,11 +141,13 @@ pub fn address(opcode: OpCodes, address: u16) -> ECommonResult<u16> {
 }
 
 pub fn address_unchecked(opcode: OpCodes, address: u16) -> ECommonResult<u16> {
+    let addr = address & 0xFFF;
     match opcode {
-        Jump => Ok(0x1000 | (address & 0xFFF)),
-        Call => Ok(0x2000 | (address & 0xFFF)),
-        SetMemReg => Ok(0xA000 | (address & 0xFFF)),
-        JumpOffset => Ok(0xB000 | (address & 0xFFF)),
+        SysCall => Ok(addr),
+        Jump => Ok(0x1000 | addr),
+        Call => Ok(0x2000 | addr),
+        SetMemReg => Ok(0xA000 | addr),
+        JumpOffset => Ok(0xB000 | addr),
         _ => Err(InvalidOpCode(opcode)),
     }
 }
