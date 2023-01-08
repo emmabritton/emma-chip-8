@@ -41,7 +41,8 @@ impl OpCodes {
             OpCodes::SetDelayTimer => format!("Set delay timer to {x}"),
             OpCodes::SetSoundTimer => format!("Set sound timer to {x}"),
             OpCodes::AddMemReg => format!("Set I to I + {x}"),
-            OpCodes::SetMemRegToDigitSprite => format!("Set I to addr of letter in {x}"),
+            OpCodes::SetMemRegToDigitSprite => format!("Set I to addr of digit in {x}"),
+            OpCodes::SetMemRegToAsciiSprite => format!("Set I to addr of ASCII in {x}"),
             OpCodes::StoreBcd => format!("Store {x} as BCD starting at I"),
             OpCodes::StoreRegs => format!("Store regs from V0 to {x} in memory starting at I"),
             OpCodes::LoadRegs => format!("Load regs from V0 to {x} from memory starting at I"),
@@ -73,7 +74,7 @@ impl OpCodes {
                         post_mem_reg,
                         pc + 2,
                         0,
-                        0,
+                        2,
                     )
                 })
                 .unwrap_or(format!("DATA {:04X}", data))
@@ -162,7 +163,10 @@ impl OpCodes {
             OpCodes::SetSoundTimer => format!("Set sound timer to {pre_vx}"),
             OpCodes::AddMemReg => format!("Set {post_mem_reg} to {pre_mem_reg} + {pre_vx}"),
             OpCodes::SetMemRegToDigitSprite => {
-                format!("Set {post_mem_reg} to addr of letter {pre_vx}")
+                format!("Set {post_mem_reg} to addr of digit {pre_vx}")
+            }
+            OpCodes::SetMemRegToAsciiSprite => {
+                format!("Set {post_mem_reg} to addr of ASCII {pre_vx}")
             }
             OpCodes::StoreBcd => format!("Store {pre_vx} as BCD starting at {pre_mem_reg}"),
             OpCodes::StoreRegs => format!("Store registers ({}) to {pre_mem_reg}", regs()),

@@ -9,7 +9,7 @@ use ec8_common::{MAX_X, MAX_Y};
 use ec8_core::input::Key;
 use ec8_core::EmmaChip8;
 use env_logger::Builder;
-use log::LevelFilter;
+use log::{LevelFilter, warn};
 use pixels_graphics_lib::{run, System, WindowScaling};
 use winit::event::VirtualKeyCode;
 use winit::event::VirtualKeyCode::*;
@@ -90,6 +90,9 @@ impl System for EC8Hardware {
         if self.ec8.state == Running {
             if self.next_run <= 0.0 {
                 self.ec8.run();
+                if self.ec8.state != Running {
+                    warn!("{:?}", self.ec8.state);
+                }
                 self.next_run = RUN_RATE;
             } else {
                 self.next_run -= delta;

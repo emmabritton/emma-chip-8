@@ -1,7 +1,7 @@
 use crate::{ALPHA_BYTES, ALPHA_START_ADDRESS};
 
 #[rustfmt::skip]
-pub const ALPHA_MEMORY: [u8; 305] = [
+pub const ALPHA_MEMORY: [u8; 315] = [
     // 4x5
     0xF0, 0x90, 0x90, 0x90, 0xF0, //0
     0x20, 0x60, 0x20, 0x20, 0x70, //1
@@ -64,6 +64,9 @@ pub const ALPHA_MEMORY: [u8; 305] = [
     0x40, 0x20, 0x30, 0x20, 0x40, //},
     0x20, 0x50, 0x00, 0x00, 0x00, //^,
     0x90, 0x20, 0x40, 0x90, 0x00, //%,
+    0x00, 0x20, 0x00, 0x20, 0x20, //;,
+    0x50, 0xF0, 0x50, 0xF0, 0x50, //#,
+
 
     // 8x8
     // 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //0
@@ -145,7 +148,7 @@ pub fn alpha_index(chr: char) -> Option<usize> {
     } else {
         let symbols = [
             '!', '?', '*', '+', '-', '=', '<', '>', ':', '\'', '"', '(', ')', '$', '&', '@', '/',
-            '\\', '_', '[', ']', '{', '}', '^', '%',
+            '\\', '_', '[', ']', '{', '}', '^', '%', ';', '#',
         ];
         symbols.iter().position(|c| c == &chr).map(|i| i + 36)
     }
@@ -153,4 +156,17 @@ pub fn alpha_index(chr: char) -> Option<usize> {
 
 pub fn alpha_addr(chr: char) -> Option<u16> {
     alpha_index(chr).map(|i| ((i * ALPHA_BYTES) as u16) + ALPHA_START_ADDRESS)
+}
+
+#[cfg(test)]
+mod test {
+    use crate::graphics::alpha_addr;
+
+    #[test]
+    fn check_alpha_addr() {
+        assert_eq!(alpha_addr('0'), Some(0));
+        assert_eq!(alpha_addr('a'), Some(50));
+        assert_eq!(alpha_addr('A'), Some(50));
+        assert_eq!(alpha_addr('!'), Some(180));
+    }
 }

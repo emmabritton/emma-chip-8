@@ -1,10 +1,11 @@
-use crate::State::{Running, WaitingForKey};
+use crate::State::{InvalidAscii, Running, WaitingForKey};
 use crate::{EmmaChip8, State};
 use ec8_common::nibbler::{Masher, Nibbler};
 use ec8_common::{
     opcodes, OpCodes, ALPHA_BYTES, ALPHA_START_ADDRESS, MAX_STACK_COUNT, MAX_X, PIXEL_COUNT,
     REG_FLAG,
 };
+use ec8_common::graphics::alpha_addr;
 #[cfg(feature = "logging")]
 use log::{debug, error, info, warn};
 
@@ -219,6 +220,14 @@ impl EmmaChip8 {
             OpCodes::AddMemReg => {
                 let num = self.read_reg(x);
                 self.mem_reg += num as u16;
+            }
+            OpCodes::SetMemRegToAsciiSprite => {
+                let chr = self.read_reg(x);
+                if let Some(addr) = alpha_addr(chr as char) {
+                    self.mem_reg = addr;
+                } else {
+                    self.state = InvalidAscii;
+                }
             }
             OpCodes::SetMemRegToDigitSprite => {
                 let digit = self.read_reg(x).second_nibble();

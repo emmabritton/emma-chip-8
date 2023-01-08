@@ -18,6 +18,7 @@ pub enum State {
     StackOverflow,
     InvalidOpcode,
     StackEmpty,
+    InvalidAscii,
     WaitingForKey(u8),
 }
 

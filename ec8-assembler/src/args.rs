@@ -13,6 +13,7 @@ pub struct Options {
     pub input_file: PathBuf,
     pub output_file: PathBuf,
     pub desc_file: Option<PathBuf>,
+    pub suppress_ec8_warning: bool,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -71,7 +72,7 @@ pub fn setup_logging(matches: &ArgMatches) {
         .init();
 }
 
-pub fn get_file_names(matches: &ArgMatches) -> Result<Options> {
+pub fn read_options(matches: &ArgMatches) -> Result<Options> {
     let input_file = matches
         .get_one::<PathBuf>("INPUT_FILE")
         .cloned()
@@ -113,9 +114,12 @@ pub fn get_file_names(matches: &ArgMatches) -> Result<Options> {
         desc_file = Some(file);
     }
 
+    let suppress_ec8_warning = matches.contains_id("ec8");
+
     Ok(Options {
         input_file,
         output_file: output,
         desc_file,
+        suppress_ec8_warning,
     })
 }

@@ -1,24 +1,93 @@
 use crate::program::Line::*;
 use ec8_common::OpCodes;
-use std::fmt::{Display, Formatter};
 use ec8_common::OpCodes::SysCall;
+use std::collections::HashMap;
+use std::fmt::{Display, Formatter};
 
 pub struct Program {
     pub lines: Vec<Line>,
 }
 
 impl Program {
-    pub fn warnings(&self) -> Option<String> {
+    pub fn warnings(&self, ignore_ec8: bool) -> Option<String> {
+        let mut output = String::new();
+        if let Some(text) = self.sys_call_warnings() {
+            output.push_str(&text);
+        }
+        if let (false, Some(text)) = (ignore_ec8, self.ec8_warnings()) {
+            if !output.is_empty() {
+                output.push('\n');
+            }
+            output.push_str(&text);
+        }
+        if output.is_empty() {
+            None
+        } else {
+            Some(output)
+        }
+    }
+
+    fn ec8_warnings(&self) -> Option<String> {
+        let mut ec8_calls: HashMap<OpCodes, Vec<usize>> = HashMap::new();
+        for line in &self.lines {
+            if let Code {
+                idx,
+                opcode,
+                bytes: _,
+                comment: _,
+            } = line
+            {
+                if opcode.is_ec8_only() {
+                    ec8_calls.entry(*opcode).or_default().push(*idx);
+                }
+            }
+        }
+        if !ec8_calls.is_empty() {
+            let text = ec8_calls
+                .iter()
+                .map(|(op, lines)| {
+                    format!(
+                        "\n  {:?}: {}",
+                        op,
+                        lines
+                            .iter()
+                            .map(|num| num.to_string())
+                            .collect::<Vec<String>>()
+                            .join(", ")
+                    )
+                })
+                .collect::<Vec<String>>()
+                .join("\n");
+            Some(format!("Contains EC8 only calls:{text}"))
+        } else {
+            None
+        }
+    }
+
+    fn sys_call_warnings(&self) -> Option<String> {
         let mut sys_calls = vec![];
         for line in &self.lines {
-            if let Code { idx, opcode, bytes:_, comment:_ } = line {
+            if let Code {
+                idx,
+                opcode,
+                bytes: _,
+                comment: _,
+            } = line
+            {
                 if opcode == &SysCall {
                     sys_calls.push(idx);
                 }
             }
         }
         if !sys_calls.is_empty() {
-            Some(format!("Contains system calls (0x0nnn) on lines {}", sys_calls.iter().map(|num| num.to_string()).collect::<Vec<String>>().join(", ")))
+            Some(format!(
+                "Contains system calls (0x0nnn) on lines {}",
+                sys_calls
+                    .iter()
+                    .map(|num| num.to_string())
+                    .collect::<Vec<String>>()
+                    .join(", ")
+            ))
         } else {
             None
         }

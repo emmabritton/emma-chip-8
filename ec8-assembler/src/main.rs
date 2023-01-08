@@ -2,10 +2,10 @@ mod args;
 mod parser;
 mod program;
 
-use crate::args::{get_file_names, setup_logging, LevelFilterParser};
+use crate::args::{read_options, setup_logging, LevelFilterParser};
 use crate::parser::parse;
 use clap::ValueHint::FilePath;
-use clap::{arg, command, value_parser};
+use clap::{arg, command, value_parser, ArgAction};
 use color_eyre::Result;
 use std::fs;
 use std::path::PathBuf;
@@ -35,17 +35,18 @@ fn main() -> Result<()> {
                 .value_parser(LevelFilterParser {})
                 .default_value("warn"),
         )
+        .arg(arg!(-e --ec8 "Suppress EC8 only opcode warning").action(ArgAction::Set))
         .get_matches();
 
     setup_logging(&matches);
-    let options = get_file_names(&matches)?;
+    let options = read_options(&matches)?;
 
     let source = fs::read_to_string(options.input_file)?;
     let source = source.lines().collect();
 
     let program = parse(source)?;
 
-    if let Some(text) = program.warnings() {
+    if let Some(text) = program.warnings(options.suppress_ec8_warning) {
         eprintln!("Warning:\n{text}");
     }
 

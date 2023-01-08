@@ -78,6 +78,7 @@ fn parse_line(i: usize, line: &str) -> Result<Line, String> {
         "sst" => Line::x(i, SetSoundTimer, 0xF0, 0x18, params),
         "adi" => Line::x(i, AddMemReg, 0xF0, 0x1E, params),
         "chr" => Line::x(i, SetMemRegToDigitSprite, 0xF0, 0x29, params),
+        "asc" => Line::x(i, SetMemRegToAsciiSprite, 0xF0, 0x30, params),
         "bcd" => Line::x(i, StoreBcd, 0xF0, 0x33, params),
         "str" => Line::x(i, StoreRegs, 0xF0, 0x55, params),
         "ldr" => Line::x(i, LoadRegs, 0xF0, 0x65, params),
@@ -276,7 +277,10 @@ mod test {
 
         let source = vec!["DAT [3411FAFA]", "CLR"];
         let program = parse(source).unwrap();
-        assert_eq!(program.describe(), "DATA 3411FAFA\n00E0 Clear the display \n".to_string());
+        assert_eq!(
+            program.describe(),
+            "DATA 3411FAFA\n00E0 Clear the display \n".to_string()
+        );
         assert_eq!(
             program.into_bytes(),
             vec![0x34, 0x11, 0xFA, 0xFA, 0x00, 0xE0]

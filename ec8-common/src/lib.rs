@@ -71,26 +71,42 @@ pub enum OpCodes {
     /// Skip next instruction if Vx == Vy
     SkipIfEqualReg,
     /// 6xnn
+    ///
+    /// Set Vx = nn
     SetRegFromNum,
     /// 7xnn
+    ///
+    /// Set Vx = Vx + nn
     AddNumToReg,
     /// 8xy0
+    ///
+    /// Set Vx = Vy
     SetRegFromReg,
     /// 8xy1
+    ///
+    /// Set Vx = Vx | Vy
     BitwiseOr,
     /// 8xy2
+    ///
+    /// Set Vx = Vx & Vy
     BitwiseAnd,
     /// 8xy3
+    ///
+    /// Set Vx = Vx ^ Vy
     BitwiseXor,
     /// 8xy4
+    ///
+    /// Set Vx = Vx + Vy
     AddReg,
     /// 8xy5
-    /// Sets Vx = Vx - Vy
+    /// 
+    /// Set Vx = Vx - Vy
     SubRightReg,
     /// 8xy6
     ShiftRight,
     /// 8xy7
-    /// Sets Vx = Vy - Vx
+    /// 
+    /// Set Vx = Vy - Vx
     SubLeftReg,
     /// 8xye
     ShiftLeft,
@@ -99,10 +115,16 @@ pub enum OpCodes {
     /// Annn
     SetMemReg,
     /// Bnnn
+    /// 
+    /// Set I = nnn
     JumpOffset,
     /// Cxnn
+    ///
+    /// Set Vx = rand(0..=255) & nn
     SetRegRand,
     /// Dxyn
+    /// 
+    /// Draw sprite at Vx,Vy with n rows from I
     DrawSprite,
     /// Ex9E
     SkipIfKeyPressed,
@@ -111,23 +133,42 @@ pub enum OpCodes {
     /// Fx07
     SetRegFromTimer,
     /// Fx0A
+    /// 
+    /// Blocks execution until a key is pressed
+    /// Key is stored in Vx
     WaitForKey,
     /// Fx15
     SetDelayTimer,
     /// Fx18
     SetSoundTimer,
     /// Fx1E
+    ///
+    /// Set I = I + Vx
     AddMemReg,
     /// Fx29
+    /// 
+    /// Set I to address of sprite for hex digit
     SetMemRegToDigitSprite,
+    /// Fx30
+    /// 
+    /// Set I to address of sprite for ASCII value
+    SetMemRegToAsciiSprite,
     /// Fx33
+    /// 
     /// Store BCD representation of Vx at I
-    ///
     StoreBcd,
     /// Fx55
+    /// 
     /// Store register values starting at I, up to Vx
     StoreRegs,
     /// Fx65
+    /// 
     /// Load register values starting at I, up to Vx
     LoadRegs,
+}
+
+impl OpCodes {
+    pub fn is_ec8_only(&self) -> bool {
+        matches!(self, OpCodes::SetMemRegToAsciiSprite)
+    }
 }
