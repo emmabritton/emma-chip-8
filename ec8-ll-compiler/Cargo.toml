@@ -1,0 +1,18 @@
+[package]
+name = "ec8-ll-compiler"
+version = "0.1.0"
+edition = "2021"
+authors = ["Emma Britton <emmabritton@pm.me>"]
+description = "Low Level Compiler for EmmaChip8"
+publish = false
+license-file = "../LICENSE"
+readme = "README.md"
+keywords = ["chip8","emu"]
+
+[dependencies]
+clap = { version = "4.0.32",features=["cargo"] }
+ec8-common = {path="../ec8-common"}
+clap-common = { path = "../clap-common" }
+color-eyre = "0.6.2"
+log = "0.4.17"
+env_logger = "0.10.0"
