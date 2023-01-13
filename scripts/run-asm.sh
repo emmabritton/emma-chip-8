@@ -12,7 +12,7 @@ if test -f "build/bin/ec8-assembler"; then
 		input="$1"
 	fi
 
-	filename="$(basename -- $1)"
+	filename=$(basename "${input%.*}")
 	output="build/output/$filename.c8"
 	desc="build/output/$filename.desc"
 
