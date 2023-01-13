@@ -1,11 +1,10 @@
 use crate::State::{InvalidAscii, Running, WaitingForKey};
 use crate::{EmmaChip8, State};
+use ec8_common::graphics::alpha_addr;
 use ec8_common::nibbler::{Masher, Nibbler};
 use ec8_common::{
-    opcodes, OpCodes, ALPHA_BYTES, ALPHA_START_ADDRESS, MAX_STACK_COUNT, MAX_X, PIXEL_COUNT,
-    REG_FLAG,
+    opcodes, OpCodes, ALPHA_BYTES, ALPHA_START_ADDRESS, MAX_STACK_COUNT, MAX_X, MAX_Y, REG_FLAG,
 };
-use ec8_common::graphics::alpha_addr;
 #[cfg(feature = "logging")]
 use log::{debug, error, info, warn};
 
@@ -48,7 +47,7 @@ impl EmmaChip8 {
         let x = bytes[0].second_nibble();
         let y = bytes[1].first_nibble_shifted();
         match opcode {
-            OpCodes::SysCall => {/*do nothing, not supported*/},
+            OpCodes::SysCall => { /*do nothing, not supported*/ }
             OpCodes::ClearDisplay => self.output.fill(false),
             OpCodes::Return => match self.stack.pop_back() {
                 None => self.state = State::StackEmpty,
@@ -315,7 +314,7 @@ impl EmmaChip8 {
             for i in 0..8 {
                 let px = x as usize + i;
                 let set_pixel = (pixels >> (7 - i) & 0x01) == 1;
-                let output_idx = (py * MAX_X + px).min(PIXEL_COUNT - 1);
+                let output_idx = (py % MAX_Y) * MAX_X + (px % MAX_X);
                 let old_value = self.output[output_idx];
                 self.output[output_idx] ^= set_pixel;
                 if old_value != self.output[output_idx] {
