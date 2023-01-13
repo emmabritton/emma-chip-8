@@ -1,0 +1,15 @@
+6300 Set V3 to 00 
+6101 Set V1 to 01 
+6201 Set V2 to 01 
+A21C Set I to 21C 
+F31E Set I to I + V3 
+F065 Load regs from V0 to V0 from memory starting at I 
+F030 Set I to addr of ASCII in V0 
+D125 Draw sprite at V1,V2 with 5 rows from I 
+4303 Skip if V3 != 03 
+121A Jump to 21A 
+7105 Set V1 to V1 + 05 
+7301 Set V3 to V3 + 01 
+1206 Jump to 206 
+F00A Wait for key press, and store it in V0 
+DATA 74657374

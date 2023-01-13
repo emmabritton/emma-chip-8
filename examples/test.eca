@@ -1,0 +1,15 @@
+set v3, 00
+set v1, 01
+set v2, 01
+sti 21C
+adi v3
+ldr v0
+asc v0
+drw v1, v2, 05
+skn v3, 03
+jmp 21A
+add v1, 05
+add v3, 01
+jmp 206
+key v0
+dat [74657374]

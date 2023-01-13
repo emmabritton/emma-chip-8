@@ -1,0 +1,21 @@
+;prints TEST on screen
+
+data str "test"
+alias idx v3
+alias x v1
+alias y v2
+alias chr v0
+
+idx = 0
+x = 1
+y = 1
+
+loop
+	read_data!(str, idx)
+	draw_ascii!(x,y,chr)
+	if eq(idx,3) break
+	x += 5
+	idx += 1
+again
+
+wait_for_key(v0)
