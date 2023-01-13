@@ -80,7 +80,7 @@ fn setup_logging() {
         .format_level(false)
         .format_target(false)
         .format_timestamp(None)
-        .filter(Some("ec8_client"), LevelFilter::Info)
+        .filter_level(LevelFilter::Warn)
         .filter(Some("ec8_core"), LevelFilter::Info)
         .init();
 }
