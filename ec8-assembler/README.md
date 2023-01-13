@@ -14,9 +14,9 @@ Options:
   -o, --output [<FILE>]        Output file (defaults to input dir)
   -d, --desc [<FILE>]          Generate describe file
   -l, --level [<LevelFilter>]  Logging level [default: warn] [possible values: off, error, warn, info, debug, trace]
+  -e, --ec8 [<CheckLevel>]     EC8 check level [default: warn] [possible values: off, warn, error]
   -h, --help                   Print help information
   -V, --version                Print version information
-
 ```
 
 For example
@@ -26,7 +26,7 @@ For example
 
 Anything after semicolons is ignored, i.e. `ADD V0, V1 ;this is a comment`
 
-To add data use `DAT [<hex bytes>]`, i.e. `DAT [3AFF0001]`
+To add data use `DAT <name> [<hex bytes>]`, i.e. `DAT example [3AFF0001]`
 
 | Name                               | Mnemonic | Params        | Example         | Code   | Notes                                                        |
 |------------------------------------|----------|---------------|-----------------|--------|--------------------------------------------------------------|
@@ -69,9 +69,9 @@ To add data use `DAT [<hex bytes>]`, i.e. `DAT [3AFF0001]`
 Example Program
 ```
 STI 0        ;Set I to 0
-DRW V0,V1, 5 ;Draw 0 to 0,0
-SET V3, F    ;Set V3 to F
-CHR V3       ;Set I to graphic for F
-SET V0, 5    ;Set V0 to 5
-DRW V0,V1, 5 ;Draw F to 0,5
+DRW V0,V1, 5 ;Draw '0' to 0,0
+SET V3, F    ;Set V3 to xF
+CHR V3       ;Set I to graphic for xF
+SET V0, 5    ;Set V0 to x5
+DRW V0,V1, 5 ;Draw 'F' to 0,5
 ```

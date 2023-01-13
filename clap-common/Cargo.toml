@@ -1,0 +1,13 @@
+[package]
+name = "clap-common"
+version = "0.1.0"
+edition = "2021"
+authors = ["Emma Britton <emmabritton@pm.me>"]
+description = "Code for Clap used by multiple EC8 crates"
+publish = false
+license-file = "../LICENSE"
+readme = "README.md"
+
+[dependencies]
+clap = "4.0.32"
+log = "0.4.17"

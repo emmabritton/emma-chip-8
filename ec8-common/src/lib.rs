@@ -14,6 +14,7 @@ pub mod error;
 pub mod graphics;
 pub mod nibbler;
 pub mod opcodes;
+pub mod mnemonics;
 
 pub const MAX_ADDRESS: u16 = 0xFFF;
 pub const PROG_START_ADDRESS: u16 = 0x200;
@@ -99,13 +100,13 @@ pub enum OpCodes {
     /// Set Vx = Vx + Vy
     AddReg,
     /// 8xy5
-    /// 
+    ///
     /// Set Vx = Vx - Vy
     SubRightReg,
     /// 8xy6
     ShiftRight,
     /// 8xy7
-    /// 
+    ///
     /// Set Vx = Vy - Vx
     SubLeftReg,
     /// 8xye
@@ -115,7 +116,7 @@ pub enum OpCodes {
     /// Annn
     SetMemReg,
     /// Bnnn
-    /// 
+    ///
     /// Set I = nnn
     JumpOffset,
     /// Cxnn
@@ -123,8 +124,8 @@ pub enum OpCodes {
     /// Set Vx = rand(0..=255) & nn
     SetRegRand,
     /// Dxyn
-    /// 
-    /// Draw sprite at Vx,Vy with n rows from I
+    ///
+    /// Draw sprite at Vx,Vy with n rows from I (xor)
     DrawSprite,
     /// Ex9E
     SkipIfKeyPressed,
@@ -133,7 +134,7 @@ pub enum OpCodes {
     /// Fx07
     SetRegFromTimer,
     /// Fx0A
-    /// 
+    ///
     /// Blocks execution until a key is pressed
     /// Key is stored in Vx
     WaitForKey,
@@ -146,23 +147,23 @@ pub enum OpCodes {
     /// Set I = I + Vx
     AddMemReg,
     /// Fx29
-    /// 
-    /// Set I to address of sprite for hex digit
+    ///
+    /// Set I to address of sprite for hex digit (5 lines)
     SetMemRegToDigitSprite,
-    /// Fx30
-    /// 
+    /// Fx31
+    ///
     /// Set I to address of sprite for ASCII value
     SetMemRegToAsciiSprite,
     /// Fx33
-    /// 
+    ///
     /// Store BCD representation of Vx at I
     StoreBcd,
     /// Fx55
-    /// 
+    ///
     /// Store register values starting at I, up to Vx
     StoreRegs,
     /// Fx65
-    /// 
+    ///
     /// Load register values starting at I, up to Vx
     LoadRegs,
 }

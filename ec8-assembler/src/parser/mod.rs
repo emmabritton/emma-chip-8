@@ -67,7 +67,7 @@ fn parse_line(i: usize, line: &str) -> Result<Line, String> {
         "sbr" => Line::xy(i, SubLeftReg, 0x80, 7, params),
         "shl" => Line::xy(i, ShiftLeft, 0x80, 0xE, params),
         "sti" => Line::nnn(i, SetMemReg, 0xA0, params),
-        "jp0" => Line::nnn(i, JumpOffset, 0xB0, params),
+        "jpo" => Line::nnn(i, JumpOffset, 0xB0, params),
         "rnd" => Line::xnn(i, SetRegRand, 0xC0, params),
         "drw" => Line::xyn(i, DrawSprite, 0xD0, params),
         "skp" => Line::x(i, SkipIfKeyPressed, 0xE0, 0x9E, params),
@@ -169,11 +169,11 @@ impl Line {
         }
         let x = parse_reg(params[0], 1)?;
         let y = parse_reg(params[1], 2)?;
-        if params[2].chars().count() > 1 {
-            return Err(format!("Line {i}) Number param is too long"));
-        }
         match u8::from_str_radix(params[2], 16) {
             Ok(num) => {
+                if num > 15 {
+                    return Err(format!("Line {i}) Number param {:02X} is too high, max is 15", num));
+                }
                 let bytes = [first | x, y | num];
                 Ok(Line::no_params(i, opcode, bytes))
             }

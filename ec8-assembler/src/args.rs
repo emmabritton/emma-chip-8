@@ -1,12 +1,12 @@
-use clap::builder::{PossibleValue, TypedValueParser};
-use clap::error::{Error as ClapError, ErrorKind};
-use clap::{Arg, ArgMatches, Command};
-use color_eyre::eyre::eyre;
 use color_eyre::Result;
 use env_logger::Builder;
 use log::LevelFilter;
-use std::ffi::OsStr;
 use std::path::PathBuf;
+use clap::ValueHint::FilePath;
+use clap::{arg, command, value_parser, ArgMatches};
+use clap_common::{arg_check_level, arg_input_file, arg_log_level, arg_output_file};
+use clap_common::arg_matcher::{ArgMatchesFiles, create_output_default};
+use color_eyre::eyre::eyre;
 
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -16,45 +16,22 @@ pub struct Options {
     pub suppress_ec8_warning: bool,
 }
 
-#[derive(Debug, Copy, Clone)]
-pub struct LevelFilterParser {}
-
-impl TypedValueParser for LevelFilterParser {
-    type Value = LevelFilter;
-
-    fn parse_ref(
-        &self,
-        _cmd: &Command,
-        _arg: Option<&Arg>,
-        value: &OsStr,
-    ) -> Result<Self::Value, ClapError> {
-        match value.to_string_lossy().to_lowercase().as_str() {
-            "debug" => Ok(LevelFilter::Debug),
-            "warn" => Ok(LevelFilter::Warn),
-            "error" => Ok(LevelFilter::Error),
-            "info" => Ok(LevelFilter::Info),
-            "off" | "none" => Ok(LevelFilter::Off),
-            "trace" => Ok(LevelFilter::Trace),
-            _ => Err(ClapError::raw(
-                ErrorKind::InvalidValue,
-                "Logging level is invalid",
-            )),
-        }
-    }
-
-    fn possible_values(&self) -> Option<Box<dyn Iterator<Item = PossibleValue> + '_>> {
-        Some(Box::new(
-            vec![
-                PossibleValue::new("off"),
-                PossibleValue::new("error"),
-                PossibleValue::new("warn"),
-                PossibleValue::new("info"),
-                PossibleValue::new("debug"),
-                PossibleValue::new("trace"),
-            ]
-            .into_iter(),
-        ))
-    }
+pub fn arg_matches() -> ArgMatches {
+    command!()
+        .arg(
+            arg_input_file!("EC8 ASM file (*.eca)"),
+        )
+        .arg(
+            arg_output_file!(),
+        )
+        .arg(
+            arg!(-d --desc [FILE] "Generate describe file")
+                .value_parser(value_parser!(PathBuf))
+                .value_hint(FilePath),
+        )
+        .arg(arg_log_level!())
+        .arg(arg_check_level!(ec8, e, "EC8 check level", "warn"))
+        .get_matches()
 }
 
 pub fn setup_logging(matches: &ArgMatches) {
@@ -73,44 +50,14 @@ pub fn setup_logging(matches: &ArgMatches) {
 }
 
 pub fn read_options(matches: &ArgMatches) -> Result<Options> {
-    let input_file = matches
-        .get_one::<PathBuf>("INPUT_FILE")
-        .cloned()
-        .expect("Input file must be provided");
-    if !input_file.is_file() {
-        return Err(eyre!(format!(
-            "Input file {} is not a file",
-            input_file.display()
-        )));
-    }
-    let filename = input_file.file_stem().unwrap_or_else(|| {
-        panic!(
-            "Input file {} has invalid path/filename",
-            input_file.display()
-        )
-    });
-    let path = input_file.parent().unwrap_or_else(|| {
-        panic!(
-            "Input file {} has invalid path/location",
-            input_file.display()
-        )
-    });
-    let mut default_output = PathBuf::from(path);
-    default_output.push(filename);
-    if !default_output.set_extension(".c8") {
-        panic!("Unable to set output extension, please raise a bug");
-    }
-    let output = matches
-        .get_one::<PathBuf>("output")
-        .cloned()
-        .unwrap_or(default_output);
+    let input_file = matches.get_file("INPUT_FILE", "Input file").map_err(|txt| eyre!(txt))?;
+    let default_output = create_output_default(&input_file, ".c8", "Output file");
+    let output = matches.get_output_file("output", "Output file", default_output).map_err(|txt| eyre!(txt))?;
 
     let mut desc_file = None;
     if matches.contains_id("desc") {
-        let file = matches
-            .get_one::<PathBuf>("desc")
-            .cloned()
-            .expect("Describe file path is invalid");
+        let default_output = create_output_default(&input_file, ".desc", "Describe file");
+        let file = matches.get_output_file("desc", "Describe file", default_output).map_err(|txt| eyre!(txt))?;
         desc_file = Some(file);
     }
 

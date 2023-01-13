@@ -81,6 +81,7 @@ impl OpCodes {
         } else {
             "not skipped".to_string()
         };
+        let x_value =  bytes[0].second_nibble();
         let x = format!("V{:01X}", bytes[0].second_nibble());
         let y = format!("V{:01X}", bytes[1].first_nibble_shifted());
         let n = format!("{:01X}", bytes[1].second_nibble());
@@ -106,10 +107,12 @@ impl OpCodes {
         let post_mem_reg = format!("I ({:02X})", post_mem_reg);
         let data_byte = format!("{:02X}", data);
         let data_addr = format!("{:03X}", data);
-        let regs = || {
+        let regs = |stop_at: u8| {
             pre_registers
                 .iter()
-                .map(|value| format!("{:02X}", value))
+                .enumerate()
+                .filter(|(i, _)| i <= &(stop_at as usize))
+                .map(|(_,value)| format!("{:02X}", value))
                 .collect::<Vec<String>>()
                 .join(", ")
         };
@@ -169,8 +172,8 @@ impl OpCodes {
                 format!("Set {post_mem_reg} to addr of ASCII {pre_vx}")
             }
             OpCodes::StoreBcd => format!("Store {pre_vx} as BCD starting at {pre_mem_reg}"),
-            OpCodes::StoreRegs => format!("Store registers ({}) to {pre_mem_reg}", regs()),
-            OpCodes::LoadRegs => format!("Load registers ({}) from {pre_mem_reg}", regs()),
+            OpCodes::StoreRegs => format!("Store registers ({}) to {pre_mem_reg}", regs(x_value)),
+            OpCodes::LoadRegs => format!("Load registers ({}) from {pre_mem_reg}", regs(x_value)),
         };
         format!("[{pc}] {:02X}{:02X} {text}", bytes[0], bytes[1])
     }
